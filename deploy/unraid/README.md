@@ -9,11 +9,27 @@ Uses the official pre-built image (`ghcr.io/gitroomhq/postiz-app:latest`) — no
 needed. If you start making your own code changes to this fork and need those changes
 running in production, see "Building your own image" below instead.
 
-## First-time install
+## First-time install (one command, no git clone)
 
-On the Unraid server (Tools > Terminal, or SSH). The checkout below is only needed to run
-the installer once — it copies what it needs into `/mnt/user/appdata/postiz` and isn't
-required afterwards:
+On the Unraid server (Tools > Terminal, or SSH):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jayvenco/postiz/main/deploy/unraid/postiz-quickstart.sh | bash
+```
+
+This downloads what it needs directly and does not require cloning the repo. If you'd
+rather review the script before running it (recommended for anything you pipe into `bash`):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jayvenco/postiz/main/deploy/unraid/postiz-quickstart.sh -o postiz-quickstart.sh
+less postiz-quickstart.sh   # read it
+chmod +x postiz-quickstart.sh
+./postiz-quickstart.sh
+```
+
+### Alternative: install from a full repo checkout
+
+Useful once you're customizing the fork and want deploy files to match a specific commit:
 
 ```bash
 git clone https://github.com/jayvenco/postiz.git /tmp/postiz-src
@@ -21,7 +37,7 @@ cd /tmp/postiz-src/deploy/unraid
 ./install.sh
 ```
 
-The script:
+Either way, the script:
 - creates `/mnt/user/appdata/postiz` with `data/`, `config/`, `uploads/`, `dynamicconfig/`
 - generates a random `JWT_SECRET` and Postgres password into `.env` if one doesn't exist yet
 - guesses this server's LAN IP for `MAIN_URL` / `FRONTEND_URL` / `NEXT_PUBLIC_BACKEND_URL`
@@ -39,17 +55,14 @@ optional — helpful for debugging scheduled posts).
 
 ## Updating
 
-Re-run the installer from a fresh checkout — it refreshes the compose file and Temporal
-config but never overwrites an existing `.env`, and your data stays in
-`/mnt/user/appdata/postiz/data`:
+Re-run the same one-liner — it refreshes the compose file and Temporal config but never
+overwrites an existing `.env`, and your data stays in `/mnt/user/appdata/postiz/data`:
 
 ```bash
-git clone https://github.com/jayvenco/postiz.git /tmp/postiz-src
-cd /tmp/postiz-src/deploy/unraid
-./install.sh
+curl -fsSL https://raw.githubusercontent.com/jayvenco/postiz/main/deploy/unraid/postiz-quickstart.sh | bash
 ```
 
-Or, for just a newer image without pulling repo changes:
+Or, for just a newer image without re-fetching anything:
 
 ```bash
 cd /mnt/user/appdata/postiz
