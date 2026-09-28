@@ -70,6 +70,24 @@ docker compose pull
 docker compose up -d
 ```
 
+## Rotating JWT_SECRET / Postgres password
+
+`postiz-quickstart.sh` already generates a random `JWT_SECRET` and Postgres password on
+first install. If you want to change them again later (routine hygiene, or right after a
+first deploy if you'd rather not keep the very first generated values), run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jayvenco/postiz/main/deploy/unraid/rotate-secrets.sh | bash
+```
+
+This generates new values, actually changes the password on the live Postgres user (not
+just `.env`), updates `.env` (keeping a timestamped backup next to it), and recreates the
+`postiz` container so it picks up the new secrets. Postgres and Temporal are left running
+untouched.
+
+Note: rotating `JWT_SECRET` invalidates every existing login — you'll need to log back in
+afterwards, same as anyone else using this instance.
+
 ## Building your own image
 
 Once you start committing your own changes to this fork, `ghcr.io/gitroomhq/postiz-app:latest`
